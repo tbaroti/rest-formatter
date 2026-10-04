@@ -6,8 +6,8 @@ import {
     type FormatterSettings,
 } from './formatter.js';
 
-function getFormatterSettings(): FormatterSettings {
-    const config = vscode.workspace.getConfiguration('rest-formatter');
+function getFormatterSettings(document: vscode.TextDocument): FormatterSettings {
+    const config = vscode.workspace.getConfiguration('rest-formatter', document);
 
     return {
         headerIndent: sanitizeIndent(config.get<unknown>('header.indent', 0), 32),
@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
             token: vscode.CancellationToken,
         ): vscode.ProviderResult<vscode.TextEdit[]> {
             const text = document.getText();
-            const settings = getFormatterSettings();
+            const settings = getFormatterSettings(document);
             if (!isStringArray(settings.JSONContentTypes)) {
                 vscode.window.showWarningMessage("Invalid setting: header.contenttypes.json must be an array of strings.");
                 return [];
